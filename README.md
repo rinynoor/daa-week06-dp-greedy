@@ -14,6 +14,6 @@ Materi:
 
 ## 🚀 Interactive Learning
 
-👉 **[Mulai Belajar](https://USERNAME.github.io/daa-week06-dp-greedy/daa-week06-dp-greedy.html)**
+👉 **[Mulai Belajar](https://riny91.github.io/daa-week06-dp-greedy/daa-week06-dp-greedy.html)**
 
 Mahasiswa akan belajar melalui **problem, simulasi, latihan, dan reflection** untuk memahami cara memilih strategi algoritma yang tepat.
