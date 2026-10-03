@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Week 06 — Dynamic Programming & Greedy Algorithms</title>
+<style>
+:root{--bg:#f7f8fb;--card:#fff;--ink:#18212f;--muted:#5f6b7a;--line:#dfe4ea;--accent:#3157d5;--soft:#eef2ff;--good:#137a55;--warn:#9a6510;--bad:#a53a3a}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:980px;margin:auto;padding:28px 18px 80px}.hero{background:linear-gradient(135deg,#17233d,#3157d5);color:#fff;border-radius:22px;padding:36px}.eyebrow{font-size:.78rem;letter-spacing:.12em;font-weight:800;opacity:.85}.hero h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;margin:.5rem 0 1rem}.hero p{max-width:760px;font-size:1.08rem}.progress{position:sticky;top:0;z-index:5;background:rgba(247,248,251,.94);backdrop-filter:blur(8px);padding:12px 0}.bar{height:8px;background:#e7eaf0;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:var(--accent);transition:.25s}.section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;margin-top:22px}.section h2{margin-top:0;font-size:1.55rem}.section h3{margin-bottom:.35rem}.lead{font-size:1.08rem}.callout{border-left:4px solid var(--accent);background:var(--soft);padding:14px 16px;border-radius:10px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.mini{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fbfcfe}.mini strong{display:block;margin-bottom:4px}.btns{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}button{border:1px solid #cbd3df;background:#fff;color:var(--ink);padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}button:hover{border-color:var(--accent)}button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button:disabled{opacity:.5;cursor:not-allowed}.result{min-height:52px;padding:12px 14px;border-radius:10px;background:#f3f5f8;margin-top:12px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}.coins{display:flex;gap:10px;flex-wrap:wrap}.coin{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;border:2px solid #d6ad3a;background:#fff7cf;font-weight:900}.timeline{display:grid;gap:8px}.activity{display:grid;grid-template-columns:55px 1fr 85px;gap:10px;align-items:center;border:1px solid var(--line);padding:10px;border-radius:10px}.activity.selected{border-color:var(--good);background:#eefaf5}.activity.conflict{opacity:.5;background:#f7eeee}.track{height:12px;background:#e9edf3;border-radius:99px;position:relative}.track span{position:absolute;height:100%;border-radius:99px;background:#7587bd}.tree{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre;overflow:auto;background:#101827;color:#e8eefc;border-radius:14px;padding:18px}.dp-table{display:flex;gap:8px;flex-wrap:wrap}.cell{min-width:64px;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:#fff}.cell.active{outline:3px solid #b8c6ff;background:var(--soft)}table{border-collapse:collapse;width:100%;overflow:auto}th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left}th{background:#f5f7fa}.bag{border:2px dashed #8a96a8;border-radius:14px;padding:16px;min-height:86px}.item{display:inline-block;margin:5px;padding:8px 10px;border-radius:9px;background:#eef2ff}.decision label{display:block;font-weight:700;margin-top:12px}.decision textarea,.decision select{width:100%;padding:10px;border:1px solid #cbd3df;border-radius:10px;font:inherit}.quiz .q{padding:16px 0;border-bottom:1px solid var(--line)}.quiz label{display:block;margin:7px 0}.footer{text-align:center;color:var(--muted);margin-top:30px;font-size:.9rem}@media(max-width:560px){.hero{padding:26px 20px}.section{padding:20px}.activity{grid-template-columns:48px 1fr}.activity .time{grid-column:2}.wrap{padding-left:12px;padding-right:12px}}
+.example{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;background:#fbfcfe}.steps{margin:10px 0;padding-left:22px}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3f5f8;padding:12px 14px;border-radius:10px;overflow:auto}.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.tag{display:inline-block;padding:2px 8px;border-radius:99px;background:var(--soft);font-size:.82rem;font-weight:700}.simline{padding:8px 0;border-bottom:1px dashed var(--line)}
+
+/* Left navigation */
+.layout{display:grid;grid-template-columns:260px minmax(0,980px);gap:24px;max-width:1280px;margin:0 auto;padding:0 18px}
+.sidebar{position:sticky;top:18px;align-self:start;height:calc(100vh - 36px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:28px}
+.sidebar-title{font-weight:900;font-size:.82rem;letter-spacing:.08em;color:var(--muted);margin:2px 8px 10px;text-transform:uppercase}
+.sidebar a{display:block;text-decoration:none;color:var(--ink);padding:9px 10px;border-radius:9px;font-size:.91rem;line-height:1.3;margin:2px 0;border-left:3px solid transparent}
+.sidebar a:hover{background:#f5f7fa}.sidebar a.active{background:var(--soft);color:var(--accent);border-left-color:var(--accent);font-weight:800}
+.main-content{min-width:0}.main-content .wrap{padding-left:0;padding-right:0}
+.menu-toggle{display:none;position:fixed;left:14px;bottom:16px;z-index:30;background:var(--accent);color:#fff;border:0;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+@media(max-width:900px){.layout{display:block;padding:0 12px}.main-content .wrap{padding-left:0;padding-right:0}.sidebar{position:fixed;z-index:25;left:12px;top:10px;bottom:72px;width:min(310px,calc(100vw - 24px));height:auto;margin:0;transform:translateX(calc(-100% - 24px));transition:transform .22s ease;box-shadow:0 16px 40px rgba(0,0,0,.18)}.sidebar.open{transform:translateX(0)}.menu-toggle{display:block}}
+</style>
+</head>
+<body>
+<button class="menu-toggle" id="menuToggle" aria-controls="sideMenu" aria-expanded="false">☰ Menu Materi</button>
+<div class="layout">
+<aside class="sidebar" id="sideMenu" aria-label="Navigasi materi">
+<div class="sidebar-title">Week 06 · Navigasi</div>
+<a href="#top">Pembuka</a>
+<a href="#bagian-1">1 · Problem Coin Change</a>
+<a href="#bagian-2">2 · Optimization Problem</a>
+<a href="#bagian-3">3 · Cara Berpikir Greedy</a>
+<a href="#bagian-4">4 · Activity Selection</a>
+<a href="#bagian-5">5 · Kapan Greedy Berhasil?</a>
+<a href="#bagian-6">6 · Mengenal Fibonacci</a>
+<a href="#bagian-7">7 · Dynamic Programming</a>
+<a href="#bagian-8">8 · Simulasi Fibonacci</a>
+<a href="#bagian-9">9 · Memoization vs Tabulation</a>
+<a href="#bagian-10">10 · Knapsack</a>
+<a href="#bagian-11">11 · DP atau Greedy?</a>
+<a href="#bagian-12">12 · Latihan Strategi</a>
+<a href="#bagian-13">13 · Kesalahan Pemahaman</a>
+<a href="#bagian-14">14 · Knowledge Check</a>
+<a href="#bagian-15">15 · Ask DAA AI Tutor</a>
+<a href="#bagian-16">16 · Reflection</a>
+<a href="#bagian-17">17 · Pelajaran yang Diperoleh</a>
+</aside>
+<main class="main-content"><div class="wrap" id="top">
+<section class="hero">
+<div class="eyebrow">DESIGN & ANALYSIS OF ALGORITHMS · WEEK 06</div>
+<h1>Dynamic Programming & Greedy Algorithms</h1>
+<p>Pada pertemuan ini, kita akan mempelajari dua strategi penting dalam desain algoritma, yaitu <strong>Dynamic Programming</strong> dan <strong>Greedy Algorithms</strong>. Kita akan melihat bagaimana Dynamic Programming memanfaatkan kembali hasil <em>subproblem</em> yang telah diselesaikan, sedangkan Greedy memilih keputusan yang dianggap terbaik pada setiap langkah.</p>
+<p>Melalui kedua pendekatan ini, kita akan melihat bahwa persoalan optimasi tidak selalu dapat diselesaikan dengan strategi yang sama. Karakteristik problem, batasan yang diberikan, dan cara kita mengambil keputusan akan menentukan strategi mana yang lebih sesuai.</p>
+</section>
+<div class="progress"><div class="bar"><span id="progressBar"></span></div></div>
+
+<section class="section"  data-step id="bagian-1">
+<h2>1. Kelihatannya Benar, Tapi Apakah Optimal?</h2>
+<p class="lead">Kita mulai dari sebuah problem sederhana. Tersedia koin bernilai <strong>1, 3, dan 4</strong>. Kita ingin membentuk nilai <strong>6</strong> dengan jumlah koin sesedikit mungkin.</p>
+<div class="callout"><strong>Pertanyaan:</strong> jika harus memilih sekarang, koin mana yang akan kamu ambil terlebih dahulu?</div>
+<div class="coins"><button class="coin coinPick" data-v="1">1</button><button class="coin coinPick" data-v="3">3</button><button class="coin coinPick" data-v="4">4</button></div>
+<div class="result" id="coinResult">Pilih satu koin untuk melihat akibat dari keputusan pertama.</div>
+<div class="btns"><button id="coinGreedy">Jalankan strategi “ambil terbesar”</button><button id="coinOptimal">Tunjukkan solusi lebih baik</button><button id="coinReset">Reset</button></div>
+<div class="result" id="coinRun">Belum ada simulasi.</div>
+<p>Apa yang baru saja kita lihat? Memilih nilai terbesar memang terasa masuk akal. Tetapi <strong>4 + 1 + 1</strong> membutuhkan tiga koin, sedangkan <strong>3 + 3</strong> hanya membutuhkan dua. Keputusan yang terlihat baik pada saat ini belum tentu menghasilkan solusi terbaik secara keseluruhan.</p>
+</section>
+
+<section class="section"  data-step id="bagian-2">
+<h2>2. Kita Sedang Menghadapi Optimization Problem</h2>
+<p>Problem tadi mempunyai tiga unsur. Ada sesuatu yang ingin kita optimalkan, ada pilihan yang tersedia, dan ada batasan yang harus dipenuhi.</p>
+<div class="grid"><div class="mini"><strong>Objective</strong>Gunakan jumlah koin sesedikit mungkin.</div><div class="mini"><strong>Choices</strong>Koin 1, 3, dan 4.</div><div class="mini"><strong>Constraint</strong>Total nilai harus tepat 6.</div></div>
+<p>Dalam computer science, kita akan sering menemukan pola yang sama: <em>maximum value</em>, <em>minimum cost</em>, waktu paling singkat, atau jumlah aktivitas terbanyak. Yang berubah adalah problem dan constraint-nya. Cara berpikir algoritmiknya tetap dapat kita pelajari.</p>
+<div class="callout"><strong>Pertanyaan besar Week 06:</strong> kapan kita boleh mengambil pilihan terbaik saat ini, dan kapan kita perlu menyimpan serta mempertimbangkan hasil dari subproblem?</div>
+</section>
+
+<section class="section"  data-step id="bagian-3">
+<h2>3. Greedy — Ambil Keputusan Terbaik Sekarang</h2>
+<p class="lead">Kita belum perlu menghafal definisi. Ingat saja cara berpikirnya: <strong>“Dari pilihan yang tersedia sekarang, mana yang tampak paling baik?”</strong></p>
+<div class="example"><strong>Kembali ke Coin Change.</strong><p>Target kita 6 dengan koin {1,3,4}. Jika aturan kita adalah <em>ambil koin terbesar yang masih dapat dipakai</em>, kita memilih 4, lalu 1, lalu 1. Hasilnya 3 koin.</p><p>Keputusan memilih 4 adalah <strong>local choice</strong>: keputusan yang terlihat terbaik pada langkah itu. Tetapi hasil akhirnya bukan yang terbaik karena 3+3 hanya membutuhkan 2 koin.</p></div>
+<div class="grid"><div class="mini"><strong>Local choice</strong>Pilihan yang dianggap terbaik <em>saat ini</em>.</div><div class="mini"><strong>Global optimum</strong>Solusi terbaik setelah seluruh problem selesai.</div></div>
+<div class="callout"><strong>Ingat:</strong> Greedy bukan berarti “selalu pilih angka terbesar”. Greedy berarti kita mempunyai sebuah <em>rule</em> untuk mengambil keputusan terbaik pada setiap langkah. Rule tersebut baru dapat dipercaya jika pilihan lokalnya aman menuju solusi akhir yang optimal.</div>
+</section>
+
+<section class="section"  data-step id="bagian-4">
+<h2>4. Simulasi Activity Selection</h2>
+<p>Satu ruang hanya dapat dipakai oleh satu aktivitas pada satu waktu. Target kita: <strong>memilih sebanyak mungkin aktivitas yang tidak bertabrakan</strong>. Coba pilih aktivitas sendiri, lalu bandingkan dengan strategi <em>earliest finish time</em>.</p>
+<div id="activities" class="timeline"></div>
+<div class="btns"><button id="actGreedy" class="primary">Jalankan Earliest Finish Time</button><button id="actReset">Reset</button></div>
+<div class="result" id="actResult">Klik aktivitas untuk mencoba membuat jadwal sendiri.</div>
+<p>Strategi klasik Activity Selection memilih aktivitas yang selesai paling awal. Pilihan ini menyisakan ruang waktu sebanyak mungkin bagi aktivitas berikutnya. Di sinilah kita mulai melihat <strong>greedy-choice property</strong>: pilihan lokal tertentu dapat digunakan untuk membangun solusi optimal.</p>
+</section>
+
+<section class="section"  data-step id="bagian-5">
+<h2>5. Kapan Greedy Berhasil?</h2>
+<p>Ini bagian yang paling penting. <strong>Greedy berhasil bukan karena cepat atau sederhana, tetapi karena rule yang dipakai memang aman.</strong> Mari bandingkan dua problem.</p>
+<div class="compare">
+<div class="example"><span class="tag">GREEDY BERHASIL</span><h3>Activity Selection</h3><p>Misalkan tersedia aktivitas A 08.00–09.00, B 08.30–10.30, C 09.00–10.00, D 10.00–11.00, dan E 10.30–12.00. Target kita adalah memilih <strong>sebanyak mungkin aktivitas tanpa bentrok</strong>.</p><p>Jika kita memilih aktivitas yang <strong>selesai paling awal</strong>, A dipilih terlebih dahulu. Setelah A selesai pukul 09.00, C masih dapat dipilih. Setelah C selesai pukul 10.00, D dapat dipilih. Kita memperoleh <strong>A → C → D = 3 aktivitas</strong>.</p><p>Mengapa rule ini masuk akal? Karena aktivitas yang selesai lebih cepat meninggalkan ruang waktu lebih banyak untuk aktivitas berikutnya. Untuk Activity Selection klasik, rule <em>earliest finish time</em> dapat dibuktikan menghasilkan solusi optimal.</p></div>
+<div class="example"><span class="tag">GREEDY GAGAL</span><h3>Coin Change {1,3,4}, target 6</h3><p>Rule “ambil koin terbesar” memilih 4 → 1 → 1 = <strong>3 koin</strong>. Tetapi 3 → 3 = <strong>2 koin</strong>.</p><p>Artinya pilihan yang terlihat terbaik sekarang ternyata menutup jalan menuju hasil terbaik. Satu <em>counterexample</em> ini sudah cukup menunjukkan bahwa rule tersebut tidak aman untuk semua target.</p></div>
+</div>
+<div class="callout"><strong>Pertanyaan mahasiswa:</strong> “Kalau saya mengambil pilihan terbaik sekarang, apakah saya dapat menjelaskan atau membuktikan bahwa pilihan itu tidak membuat solusi akhir menjadi lebih buruk?” Jika ya, problem tersebut dapat menjadi kandidat Greedy.</div>
+</section>
+
+<section class="section"  data-step id="bagian-6">
+<h2>6. Fibonacci — Dari Mana Rumusnya?</h2>
+<p class="lead">Sekarang kita pindah ke problem kedua. Tujuannya bukan mencari koin, tetapi melihat mengapa menyimpan hasil perhitungan dapat sangat membantu.</p>
+<p>Barisan Fibonacci dimulai dari <strong>0 dan 1</strong>. Setelah itu, setiap bilangan diperoleh dengan menjumlahkan <strong>dua bilangan sebelumnya</strong>.</p>
+<div class="formula">F(0) = 0
+F(1) = 1
+F(2) = F(1) + F(0) = 1
+F(3) = F(2) + F(1) = 2
+F(4) = F(3) + F(2) = 3
+F(5) = F(4) + F(3) = 5</div>
+<p>Jadi urutannya: <strong>0, 1, 1, 2, 3, 5, 8, 13, ...</strong></p>
+<div class="callout">Rumus umumnya adalah <strong>F(n) = F(n−1) + F(n−2)</strong>. Artinya, untuk mencari F(5), kita membutuhkan F(4) dan F(3). Untuk mencari F(4), kita kembali membutuhkan F(3) dan F(2).</div>
+<div class="btns"><button id="recNext" class="primary">Simulasikan F(5) langkah demi langkah</button><button id="recReset">Reset</button></div>
+<div class="result" id="recResult">Tekan tombol. Perhatikan subproblem mana yang muncul kembali.</div>
+<div class="tree">F(5)
+├── F(4)
+│   ├── F(3)
+│   │   ├── F(2)
+│   │   └── F(1)
+│   └── F(2)
+└── F(3)
+    ├── F(2)
+    └── F(1)</div>
+<p>Di pohon tersebut, <strong>F(3)</strong> dan <strong>F(2)</strong> dihitung lebih dari sekali. Pertanyaan sederhananya: <em>kalau F(3) sudah pernah dihitung dan hasilnya 2, mengapa kita menghitungnya lagi?</em></p>
+</section>
+
+<section class="section"  data-step id="bagian-7">
+<h2>7. Dari Fibonacci ke Dynamic Programming</h2>
+<p><strong>Dynamic Programming (DP)</strong> memakai ide sederhana: pecah problem menjadi problem yang lebih kecil, selesaikan, lalu <strong>simpan hasil yang masih akan digunakan kembali</strong>.</p>
+<div class="grid">
+<div class="mini"><strong>1. Subproblem</strong>Problem kecil yang membantu menyelesaikan problem besar. Untuk F(5), contoh subproblem-nya adalah F(4), F(3), dan F(2).</div>
+<div class="mini"><strong>2. Overlapping subproblems</strong>Subproblem yang sama muncul kembali. Pada F(5), F(3) dan F(2) diminta beberapa kali. Daripada dihitung lagi, hasilnya dapat disimpan.</div>
+<div class="mini"><strong>3. Optimal substructure</strong>Pada problem optimasi, solusi terbaik problem besar dapat dibangun dari solusi terbaik problem yang lebih kecil. Contohnya akan lebih jelas pada Coin Change dan 0/1 Knapsack.</div>
+</div>
+<div class="example"><strong>Contoh kembali ke Coin Change.</strong><p>Untuk mengetahui minimum koin target 6, kita dapat memanfaatkan jawaban target yang lebih kecil. Jika koin terakhir 1, kita perlu solusi terbaik target 5. Jika koin terakhir 3, kita perlu solusi terbaik target 3. Jika koin terakhir 4, kita perlu solusi terbaik target 2.</p><div class="formula">DP[6] = 1 + min(DP[5], DP[3], DP[2])
+      = 1 + min(2, 1, 2)
+      = 2</div><p>Pilihan terbaik berasal dari DP[3]=1, sehingga 3 + 3 membutuhkan 2 koin.</p></div>
+<div class="callout"><strong>Jadi jangan menghafal istilahnya dulu.</strong> Subproblem = problem kecil. Overlap = problem kecil yang sama muncul lagi. DP = simpan hasilnya agar dapat dipakai kembali.</div>
+</section>
+
+<section class="section"  data-step id="bagian-8">
+<h2>8. Simulasi Fibonacci dengan Tabulation</h2>
+<p>Sekarang kita berhenti menghitung nilai yang sama berulang kali. Kita mulai dari nilai yang sudah diketahui, yaitu <strong>F(0)=0</strong> dan <strong>F(1)=1</strong>, kemudian membangun nilai berikutnya satu per satu. Cara ini disebut <strong>tabulation</strong> atau pendekatan <strong>bottom-up</strong>.</p>
+<div id="fibTable" class="dp-table"></div>
+<div class="btns"><button id="fibNext" class="primary">Hitung langkah berikutnya</button><button id="fibReset">Reset</button></div>
+<div class="result" id="fibResult">Kita mulai dari F(0)=0 dan F(1)=1.</div>
+</section>
+
+<section class="section"  data-step id="bagian-9">
+<h2>9. Dua Cara Menyimpan Hasil: Memoization dan Tabulation</h2>
+<p><strong>Memoization dan Tabulation bukan dua algoritma baru.</strong> Keduanya adalah dua cara menjalankan ide Dynamic Programming.</p>
+<div class="compare"><div class="example"><h3>Memoization — Top-Down</h3><p>Mulai dari problem besar: “Berapa F(5)?” Kita turun ke F(4), F(3), dan seterusnya. Begitu suatu nilai selesai dihitung, nilai itu disimpan.</p><div class="formula">Hitung F(3) → hasil 2 → SIMPAN
+F(3) diminta lagi → AMBIL 2 → tidak menghitung ulang</div></div><div class="example"><h3>Tabulation — Bottom-Up</h3><p>Mulai dari nilai terkecil yang sudah diketahui. Kemudian isi tabel sedikit demi sedikit sampai mencapai target.</p><div class="formula">F(0)=0 → F(1)=1 → F(2)=1 → F(3)=2 → F(4)=3 → F(5)=5</div></div></div>
+<div class="callout"><strong>Analogi:</strong> Memoization seperti mencari jawaban hanya ketika diperlukan lalu mencatatnya. Tabulation seperti mengisi tabel jawaban dari awal sampai target. Keduanya menghindari pekerjaan yang tidak perlu.</div>
+</section>
+
+<section class="section"  data-step id="bagian-10">
+<h2>10. Problem Baru: Knapsack — Mengapa Tiba-Tiba Ada Tas?</h2>
+<p>Knapsack bukan algoritma baru. <strong>Knapsack adalah nama sebuah problem optimasi</strong> yang sering digunakan untuk menguji apakah kita memahami kapan Greedy dapat dipakai dan kapan DP lebih sesuai.</p>
+<p>Bayangkan sebuah tas hanya mampu membawa <strong>5 kg</strong>. Ada empat item. Setiap item mempunyai <em>weight</em> dan <em>value</em>. Tujuan kita: <strong>mendapatkan value sebesar mungkin tanpa melewati kapasitas 5 kg</strong>.</p>
+<table><thead><tr><th>Item</th><th>Weight</th><th>Value</th><th>Value/Weight</th></tr></thead><tbody><tr><td>A</td><td>2</td><td>12</td><td>6.0</td></tr><tr><td>B</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>C</td><td>3</td><td>20</td><td>6.67</td></tr><tr><td>D</td><td>2</td><td>15</td><td>7.5</td></tr></tbody></table>
+<h3>Coba 0/1 Knapsack</h3><p>Angka <strong>0/1</strong> berarti item hanya boleh <strong>tidak diambil (0)</strong> atau <strong>diambil utuh (1)</strong>. Item tidak boleh dipotong. Coba klik beberapa item.</p>
+<div class="btns" id="itemButtons"></div><div class="bag" id="bag">Tas masih kosong.</div><div class="result" id="bagResult">Weight 0/5 · Value 0</div><div class="btns"><button id="bagReset">Reset tas</button><button id="bagBest">Tampilkan kombinasi optimal</button></div>
+<div class="example"><strong>Mengapa A + B + D optimal?</strong><p>A+B+D mempunyai weight <strong>2+1+2=5 kg</strong> dan value <strong>12+10+15=37</strong>. Bandingkan beberapa kombinasi valid: B+C = value 30, C+D = 35, A+C = 32, dan A+B+D = 37. Jadi 37 adalah value terbesar yang dapat diperoleh tanpa melewati 5 kg.</p><p>Untuk <strong>0/1 Knapsack</strong>, memilih item terbaik satu per satu berdasarkan rasio value/weight tidak selalu menjamin kombinasi akhir terbaik. Karena pilihan item saling memengaruhi kapasitas yang tersisa, DP biasa digunakan untuk mempertimbangkan kombinasi secara sistematis.</p></div>
+<div class="example"><strong>Lalu kapan Knapsack bisa Greedy?</strong><p>Pada <strong>Fractional Knapsack</strong>, item boleh diambil sebagian. Kita dapat mengurutkan item berdasarkan <em>value/weight</em> tertinggi dan mengambil sebanyak mungkin dari rasio terbaik. Karena item boleh dipotong, local choice ini aman untuk problem Fractional Knapsack klasik.</p></div>
+</section>
+
+<section class="section"  data-step id="bagian-11">
+<h2>11. Jadi, Bagaimana Menentukan DP atau Greedy?</h2>
+<p>Untuk tahap awal, jangan mulai dari tujuh istilah. Gunakan <strong>tiga pertanyaan</strong> berikut.</p>
+<div class="example"><h3>Pertanyaan 1 — Apakah saya bisa mengambil keputusan terbaik sekarang?</h3><p>Carilah <em>local choice</em>. Contoh Activity Selection: pilih aktivitas yang selesai paling awal.</p></div>
+<div class="example"><h3>Pertanyaan 2 — Apakah pilihan itu aman sampai akhir?</h3><p>Coba cari <em>counterexample</em>. Jika pilihan lokal dapat membuat hasil akhir lebih buruk, jangan langsung mengandalkan Greedy. Coin Change {1,3,4}, target 6 adalah contohnya: memilih 4 terlebih dahulu menghasilkan 3 koin, bukan minimum.</p><p><strong>Jika local choice dapat dibuktikan selalu aman → kandidat Greedy.</strong></p></div>
+<div class="example"><h3>Pertanyaan 3 — Jika Greedy tidak aman, dapatkah problem dipecah menjadi problem kecil?</h3><p>Periksa apakah solusi problem kecil dapat disimpan dan dipakai untuk membangun solusi problem yang lebih besar. Jika ya—terutama ketika subproblem berulang dan terdapat optimal substructure—<strong>DP menjadi kandidat kuat</strong>.</p></div>
+<div class="compare"><div class="example"><h3>Contoh Greedy</h3><p><strong>Activity Selection:</strong> earliest finish time dapat dibuktikan aman → Greedy.</p><p><strong>Fractional Knapsack:</strong> pilih value/weight tertinggi dan item boleh dipotong → Greedy.</p></div><div class="example"><h3>Contoh DP</h3><p><strong>Coin Change umum:</strong> local choice “ambil terbesar” dapat gagal → simpan solusi target-target kecil.</p><p><strong>0/1 Knapsack:</strong> item tidak boleh dipotong dan kombinasi pilihan perlu dibandingkan → DP.</p></div></div>
+<div class="callout"><strong>Kalimat pengingat:</strong> Greedy bertanya, “Pilihan terbaik apa yang aman saya ambil sekarang?” DP bertanya, “Hasil problem kecil apa yang perlu saya simpan agar dapat membangun solusi terbaik?”</div>
+</section>
+
+<section class="section decision"  data-step id="bagian-12">
+<h2>12. Latihan Menentukan Strategi</h2>
+<p><strong>Kasus:</strong> Sebuah aplikasi harus menentukan jumlah koin minimum untuk target 6 dengan koin {1,3,4}. Pilih strategi dan jelaskan alasanmu. Jangan hanya menulis “DP” atau “Greedy”.</p>
+<label for="strategy">Strategi</label><select id="strategy"><option value="">Pilih...</option><option>Dynamic Programming</option><option>Greedy</option></select>
+<label for="reason">Alasan</label><textarea id="reason" rows="4" placeholder="Contoh arah berpikir: apa yang terjadi jika Greedy memilih 4 lebih dahulu? Apakah hasilnya minimum?"></textarea>
+<div class="btns"><button id="decisionCheck" class="primary">Periksa Jawaban</button><button type="button" id="decisionExample">Lihat Contoh Jawaban</button></div><div class="result" id="decisionResult">Belum diperiksa.</div>
+</section>
+
+<section class="section"  data-step id="bagian-13">
+<h2>13. Kesalahan Pemahaman yang Sering Terjadi</h2>
+<p>Bagian ini membahas beberapa pemahaman yang sekilas terdengar benar, tetapi perlu diperbaiki.</p>
+<div class="grid"><div class="mini"><strong>“Greedy = pilih terbesar.”</strong>Tidak. Greedy mengikuti local choice yang sesuai dengan struktur problem. Activity Selection justru memilih aktivitas yang selesai paling awal.</div><div class="mini"><strong>“Semua recursion = DP.”</strong>Tidak. Recursion adalah cara fungsi memanggil dirinya sendiri. DP memanfaatkan hasil subproblem yang disimpan/digunakan kembali.</div><div class="mini"><strong>“DP selalu lebih baik.”</strong>Tidak. Jika greedy-choice property berlaku, Greedy bisa lebih sederhana dan efisien.</div><div class="mini"><strong>“Semua Knapsack = DP.”</strong>Tidak. Fractional Knapsack klasik → Greedy. 0/1 Knapsack klasik → DP.</div></div>
+</section>
+
+<section class="section quiz"  data-step id="bagian-14">
+<h2>14. Knowledge Check</h2>
+<form id="quizForm">
+<div class="q"><strong>1. Apa tanda paling jelas adanya overlapping subproblems?</strong><label><input type="radio" name="q1" value="a"> Semua input memiliki ukuran sama</label><label><input type="radio" name="q1" value="b"> Subproblem yang sama dihitung berulang</label><label><input type="radio" name="q1" value="c"> Selalu memilih nilai terbesar</label></div>
+<div class="q"><strong>2. Pada Activity Selection klasik, rule Greedy yang umum adalah...</strong><label><input type="radio" name="q2" value="a"> Aktivitas yang selesai paling awal</label><label><input type="radio" name="q2" value="b"> Aktivitas paling lama</label><label><input type="radio" name="q2" value="c"> Aktivitas dengan start paling awal</label></div>
+<div class="q"><strong>3. Mengapa Coin Change {1,3,4}, target 6, penting sebagai contoh?</strong><label><input type="radio" name="q3" value="a"> Membuktikan Greedy selalu optimal</label><label><input type="radio" name="q3" value="b"> Menunjukkan local choice dapat gagal mencapai global optimum</label><label><input type="radio" name="q3" value="c"> Menunjukkan recursion selalu diperlukan</label></div>
+<div class="btns"><button class="primary" type="submit">Periksa Jawaban</button></div><div class="result" id="quizResult">Jawab ketiga pertanyaan.</div>
+</form>
+</section>
+
+<section class="section"  data-step id="bagian-15">
+<h2>15. Latihan Pemahaman & Ask DAA AI Tutor</h2>
+<p>Kerjakan latihan dan tuliskan reasoning terlebih dahulu. Jika masih belum paham, barulah gunakan DAA AI Tutor sebagai partner belajar.</p>
+<div class="grid"><div class="mini"><strong>Jika belum paham konsep</strong>“Jelaskan dengan contoh sederhana mengapa memilih yang terbaik sekarang belum tentu optimal.”</div><div class="mini"><strong>Jika sedang memecahkan problem</strong>“Bantu saya menentukan DP atau Greedy dengan pertanyaan petunjuk. Jangan langsung beri jawaban.”</div><div class="mini"><strong>Jika sudah punya jawaban</strong>“Saya memilih DP karena .... Tolong evaluasi reasoning saya.”</div></div>
+<div class="callout"><strong>Aturannya:</strong> pikirkan dahulu → tulis jawaban awal → gunakan AI bila perlu → evaluasi kembali jawabanmu. AI membantu proses berpikir, bukan menggantikannya.</div>
+</section>
+
+<section class="section decision"  data-step id="bagian-16">
+<h2>16. Reflection</h2>
+<p>Jangan mulai dengan definisi. Lengkapi kalimat berikut berdasarkan apa yang sudah kamu coba.</p>
+<label for="reflection"><strong>Greedy:</strong> “Saya memilih __________ karena __________.”<br><strong>Dynamic Programming:</strong> “Saya menyimpan/menggunakan hasil __________ karena __________.”<br><br>Kemudian jelaskan: <strong>Mengapa pilihan terbaik saat ini belum tentu menjadi solusi terbaik di akhir?</strong></label>
+<textarea id="reflection" rows="6" placeholder="Tuliskan dengan bahasamu sendiri dan sertakan satu contoh dari simulasi."></textarea>
+<div class="btns"><button id="saveReflection">Simpan refleksi di halaman</button></div><div class="result" id="reflectionResult">Refleksi belum disimpan.</div>
+</section>
+
+<section class="section"  data-step id="bagian-17">
+<h2>17. Pelajaran yang Dapat Diambil</h2>
+<p>Setelah menyelesaikan pertemuan ini, yang perlu dibawa pulang bukan sekadar definisi DP dan Greedy, tetapi <strong>cara berpikir ketika menghadapi problem baru</strong>.</p>
+<div class="grid"><div class="mini"><strong>Greedy</strong>Ambil local choice jika kita mempunyai alasan bahwa pilihan tersebut aman menuju global optimum.</div><div class="mini"><strong>Dynamic Programming</strong>Pecah menjadi subproblem, simpan hasil yang berguna, dan gunakan hasil tersebut untuk membangun solusi yang lebih besar.</div><div class="mini"><strong>Jangan menebak</strong>Uji rule Greedy dengan counterexample. Untuk DP, cari subproblem, overlap, dan bagaimana solusi problem kecil membangun solusi problem besar.</div></div>
+<div class="callout"><strong>Target akhirnya:</strong> ketika diberi sebuah problem, kamu tidak hanya mampu mengatakan “DP” atau “Greedy”, tetapi mampu menjelaskan <strong>mengapa</strong> strategi itu sesuai.</div>
+</section>
+<div class="footer">Week 06 · Design & Analysis of Algorithms · Interactive Learning Module</div>
+</div>
+</main></div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function updateProgress(){const max=document.documentElement.scrollHeight-innerHeight; const p=max?Math.min(100,scrollY/max*100):0; $('#progressBar').style.width=p+'%'} addEventListener('scroll',updateProgress,{passive:true}); updateProgress();
+$$('.coinPick').forEach(b=>b.addEventListener('click',()=>{const v=+b.dataset.v; $('#coinResult').innerHTML=v===4?'Kamu memilih <strong>4</strong>. Pilihan ini terlihat paling besar sekarang. Coba jalankan strategi Greedy dan lihat hasil akhirnya.':v===3?'Kamu memilih <strong>3</strong>. Menarik. Jika memilih 3 lagi, target 6 tercapai dengan 2 koin.':'Kamu memilih <strong>1</strong>. Ini valid, tetapi belum tentu memberi jumlah koin minimum.'}));
+$('#coinGreedy').addEventListener('click',()=>$('#coinRun').innerHTML='<span class="warn"><strong>Greedy terbesar:</strong> 4 → 1 → 1 = 6. Total 3 koin.</span>');
+$('#coinOptimal').addEventListener('click',()=>$('#coinRun').innerHTML='<span class="good"><strong>Solusi lebih baik:</strong> 3 → 3 = 6. Total 2 koin. Local choice terbesar tidak memberi global optimum.</span>');
+$('#coinReset').addEventListener('click',()=>{$('#coinResult').textContent='Pilih satu koin untuk melihat akibat dari keputusan pertama.';$('#coinRun').textContent='Belum ada simulasi.'});
+const acts=[['A',8,9],['B',8.5,10.5],['C',9,10],['D',10,11],['E',10.5,12]]; const actWrap=$('#activities'); let chosen=[];
+function drawActs(){actWrap.innerHTML=''; acts.forEach(a=>{const [n,s,f]=a;const d=document.createElement('button');d.type='button';d.className='activity';if(chosen.includes(n))d.classList.add('selected');const conflict=chosen.some(c=>{const x=acts.find(z=>z[0]===c);return n!==c && s<x[2] && f>x[1]});if(conflict&&!chosen.includes(n))d.classList.add('conflict');d.innerHTML=`<strong>${n}</strong><div class="track"><span style="left:${(s-8)/4*100}%;width:${(f-s)/4*100}%"></span></div><span class="time">${String(Math.floor(s)).padStart(2,'0')}:${s%1?'30':'00'}–${String(Math.floor(f)).padStart(2,'0')}:${f%1?'30':'00'}</span>`;d.addEventListener('click',()=>{if(chosen.includes(n)){chosen=chosen.filter(x=>x!==n)}else if(!conflict){chosen.push(n)}else{$('#actResult').innerHTML='<span class="bad">Aktivitas ini bertabrakan dengan pilihan yang sudah ada.</span>'} drawActs();$('#actResult').innerHTML=`Terpilih: <strong>${chosen.join(', ')||'belum ada'}</strong> · Total ${chosen.length} aktivitas.`});actWrap.appendChild(d)})}
+drawActs(); $('#actReset').addEventListener('click',()=>{chosen=[];drawActs();$('#actResult').textContent='Klik aktivitas untuk mencoba membuat jadwal sendiri.'}); $('#actGreedy').addEventListener('click',()=>{chosen=['A','C','D'];drawActs();$('#actResult').innerHTML='<span class="good"><strong>Earliest finish time:</strong> A → C → D. Tiga aktivitas dapat dijadwalkan tanpa konflik.</span>'});
+let recStep=0; const recMsgs=[
+'F(5) belum kita ketahui. Berdasarkan rumus, kita perlu menghitung <strong>F(4) + F(3)</strong>.',
+'Untuk F(4), kita perlu <strong>F(3) + F(2)</strong>. Perhatikan: F(3) juga sudah dibutuhkan oleh F(5).',
+'Untuk F(3), kita perlu <strong>F(2) + F(1)</strong>. Sekarang F(2) muncul lagi.',
+'Inilah <strong>overlapping subproblems</strong>: F(3) dan F(2) diminta berulang. Recursion biasa akan menghitungnya lagi jika tidak ada penyimpanan.',
+'Jika F(2)=1 dan F(3)=2 sudah disimpan, kita cukup <strong>reuse</strong> hasilnya. Inilah ide dasar Dynamic Programming.'
+];
+$('#recNext').addEventListener('click',()=>{ $('#recResult').innerHTML=recMsgs[Math.min(recStep,recMsgs.length-1)]; if(recStep<recMsgs.length-1)recStep++; });
+$('#recReset').addEventListener('click',()=>{recStep=0;$('#recResult').textContent='Tekan tombol untuk melihat bagaimana recursion memecah F(5) menjadi problem yang lebih kecil.'});
+let fi=2, fib=[0,1]; function drawFib(){const w=$('#fibTable');w.innerHTML='';for(let i=0;i<=7;i++){const c=document.createElement('div');c.className='cell'+(i===fi?' active':'');c.innerHTML=`<strong>F(${i})</strong><br>${fib[i]??'?'}`;w.appendChild(c)}} drawFib();
+$('#fibNext').addEventListener('click',()=>{if(fi>7){$('#fibResult').innerHTML='<span class="good">Selesai. F(7)=13. Setiap nilai disimpan dan digunakan kembali.</span>';return} fib[fi]=fib[fi-1]+fib[fi-2];$('#fibResult').innerHTML=`F(${fi}) = F(${fi-1}) + F(${fi-2}) = <strong>${fib[fi]}</strong>. Nilai ini sekarang disimpan.`;fi++;drawFib()}); $('#fibReset').addEventListener('click',()=>{fi=2;fib=[0,1];drawFib();$('#fibResult').textContent='Kita mulai dari F(0)=0 dan F(1)=1.'});
+const items=[{n:'A',w:2,v:12},{n:'B',w:1,v:10},{n:'C',w:3,v:20},{n:'D',w:2,v:15}];let bag=[];function drawBag(){const w=bag.reduce((s,n)=>s+items.find(i=>i.n===n).w,0),v=bag.reduce((s,n)=>s+items.find(i=>i.n===n).v,0);$('#bag').innerHTML=bag.length?bag.map(n=>`<span class="item">${n}</span>`).join(''):'Tas masih kosong.';$('#bagResult').innerHTML=`Weight <strong>${w}/5</strong> · Value <strong>${v}</strong>`;$$('#itemButtons button').forEach(b=>b.textContent=(bag.includes(b.dataset.n)?'Keluarkan ':'Ambil ')+b.dataset.n)}function makeItemButtons(){items.forEach(i=>{const b=document.createElement('button');b.type='button';b.dataset.n=i.n;b.textContent='Ambil '+i.n;b.addEventListener('click',()=>{if(bag.includes(i.n))bag=bag.filter(x=>x!==i.n);else{const w=bag.reduce((s,n)=>s+items.find(x=>x.n===n).w,0);if(w+i.w>5){$('#bagResult').innerHTML='<span class="bad">Tidak dapat ditambahkan: kapasitas tas akan melebihi 5 kg.</span>';return}bag.push(i.n)}drawBag()});$('#itemButtons').appendChild(b)})}makeItemButtons();drawBag();$('#bagReset').addEventListener('click',()=>{bag=[];drawBag()});$('#bagBest').addEventListener('click',()=>{bag=['A','B','D'];drawBag();$('#bagResult').innerHTML='<span class="good"><strong>Kombinasi optimal:</strong> A + B + D → Weight 5/5 · Value 37. Kombinasi ini memberi value terbesar tanpa melebihi kapasitas.</span>'});
+$('#decisionCheck').addEventListener('click',()=>{const s=$('#strategy').value,r=$('#reason').value.trim().toLowerCase();if(!s||r.length<25){$('#decisionResult').innerHTML='<span class="warn">Pilih strategi dan tuliskan reasoning yang cukup. Sebutkan mengapa rule Greedy “ambil terbesar” gagal atau mengapa DP perlu dipertimbangkan.</span>';return}if(s==='Dynamic Programming'&&(r.includes('optimal')||r.includes('greedy')||r.includes('subproblem')||r.includes('kombin'))){$('#decisionResult').innerHTML='<span class="good"><strong>Reasoning mengarah benar.</strong> Untuk sistem koin ini, Greedy terbesar gagal pada target 6. DP dapat membangun solusi minimum dari hasil subproblem yang lebih kecil.</span>'}else{$('#decisionResult').innerHTML='<span class="warn">Coba periksa lagi. Untuk target 6, strategi terbesar memberi 4+1+1, padahal 3+3 lebih baik. Apa implikasinya terhadap pilihan Greedy?</span>'}});
+$('#decisionExample').addEventListener('click',()=>{$('#decisionResult').innerHTML='<span class="good"><strong>Contoh jawaban:</strong> Dynamic Programming, karena rule Greedy “ambil koin terbesar” menghasilkan 4+1+1 = 3 koin, sedangkan solusi optimal 3+3 hanya 2 koin. DP dapat memanfaatkan solusi target-target yang lebih kecil untuk membangun jumlah koin minimum.</span>'});
+$('#quizForm').addEventListener('submit',e=>{e.preventDefault();const a=new FormData(e.currentTarget),ans=[a.get('q1'),a.get('q2'),a.get('q3')];if(ans.some(x=>!x)){$('#quizResult').innerHTML='<span class="warn">Jawab semua pertanyaan terlebih dahulu.</span>';return}const key=['b','a','b'];const score=ans.filter((x,i)=>x===key[i]).length;$('#quizResult').innerHTML=`Skor <strong>${score}/3</strong>. ${score===3?'<span class="good">Bagus. Kamu sudah menangkap pola utama DP dan Greedy.</span>':'Periksa kembali: overlapping subproblems = subproblem berulang; Activity Selection memakai earliest finish time; local choice tidak selalu global optimum.'}`});
+$('#saveReflection').addEventListener('click',()=>{const v=$('#reflection').value.trim();$('#reflectionResult').innerHTML=v.length<30?'<span class="warn">Tuliskan refleksi sedikit lebih lengkap dan sertakan contoh.</span>':'<span class="good"><strong>Refleksi tersimpan untuk sesi ini.</strong> Baca kembali jawabanmu: '+v.replace(/[<>]/g,'')+'</span>'});
+
+// Left menu: mobile toggle + active section tracking
+const sideMenu=document.getElementById('sideMenu');
+const menuToggle=document.getElementById('menuToggle');
+if(menuToggle&&sideMenu){
+  menuToggle.addEventListener('click',()=>{const open=sideMenu.classList.toggle('open');menuToggle.setAttribute('aria-expanded',String(open));});
+  sideMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{sideMenu.classList.remove('open');menuToggle.setAttribute('aria-expanded','false');}));
+  const menuLinks=[...sideMenu.querySelectorAll('a[href^="#bagian-"]')];
+  const sections=menuLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){menuLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+entry.target.id));}})},{rootMargin:'-20% 0px -65% 0px',threshold:0});
+  sections.forEach(sec=>observer.observe(sec));
+}
+</script>
+</body>
+</html>
