@@ -2,11 +2,10 @@
 
 Interactive learning module untuk mata kuliah **Design and Analysis of Algorithms (DAA)**.
 
-Materi:
+Materi utama:
 - Dynamic Programming
 - Greedy Algorithm
 - Coin Change
-- Activity Selection
 - Fibonacci
 - Memoization & Tabulation
 - Knapsack
@@ -14,6 +13,6 @@ Materi:
 
 ## 🚀 Interactive Learning
 
-👉 **[Mulai Belajar](https://riny91.github.io/daa-week06-dp-greedy/daa-week06-dp-greedy.html)**
+👉 [Mulai Belajar](https://rinynoor.github.io/daa-week06-dp-greedy/daa-week06-dp-greedy.html)
 
-Mahasiswa akan belajar melalui **problem, simulasi, latihan, dan reflection** untuk memahami cara memilih strategi algoritma yang tepat.
+Belajar melalui **problem, simulasi, latihan, dan refleksi** untuk memahami cara memilih strategi algoritma yang tepat.
